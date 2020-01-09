@@ -1,4 +1,7 @@
 - Make Basic C++ main with window work on windows and linux and Mac OS
+{
+	- for mac os : GLFW_INCLUDE_GLCOREARB
+}
 
 - Draw Cube
 
