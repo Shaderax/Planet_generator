@@ -1,0 +1,9 @@
+- Make Basic C++ main with window work on windows and linux and Mac OS
+
+- Draw Cube
+
+- Transformer cube en sphere
+
+- Implementation bruit perlin et voir resultat avec glDrawPixels
+
+- Appliquer perlin noise on Cube
