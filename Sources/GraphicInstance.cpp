@@ -100,9 +100,10 @@ void GraphicInstance::Initialize( void )
 
 	glEnable(GL_DEPTH_TEST);
 	glfwSwapInterval(0);
-	//      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
-
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void GraphicInstance::SetBackgroundColor( vec4<float> color )
@@ -113,7 +114,7 @@ void GraphicInstance::SetBackgroundColor( vec4<float> color )
 void GraphicInstance::Update( void )
 {
 	glClearColor(_backgroundColor.x, _backgroundColor.y, _backgroundColor.z, _backgroundColor.w);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void GraphicInstance::ShowCursor( bool select )
@@ -145,28 +146,28 @@ void GraphicInstance::CreateVAO( GLuint* vao, GLuint* vboToBind )
 GLuint GraphicInstance::CompileShader( std::vector<char>& shaderCode, int shaderType )
 {
 	GLuint			shader_id;
-        int			success;
-        char			infolog[512];
+	int			success;
+	char			infolog[512];
 
-        shader_id = glCreateShader(shaderType);
+	shader_id = glCreateShader(shaderType);
 	const char *cstr = shaderCode.data();
-        glShaderSource(shader_id, 1, &cstr, NULL);
-        glCompileShader(shader_id);
-        glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
+	glShaderSource(shader_id, 1, &cstr, NULL);
+	glCompileShader(shader_id);
+	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
 
-        if (!success)
-        {
-                glGetShaderInfoLog(shader_id, 512, NULL, infolog);
+	if (!success)
+	{
+		glGetShaderInfoLog(shader_id, 512, NULL, infolog);
 		std::cout << "ERROR::SHADER::COMPILATION_FAILED : " << infolog << std::endl;
-        }
+	}
 
-        return (shader_id);
+	return (shader_id);
 }
 
 uint32_t GraphicInstance::CreateShaderProgram( std::string vertPath, std::string fragPath )
 {
-        int	success;
-        char	infolog[512];
+	int	success;
+	char	infolog[512];
 
 	std::vector<char>&& vertCode = ReadFile(vertPath);
 	std::vector<char>&& fragCode = ReadFile(fragPath);
@@ -175,20 +176,20 @@ uint32_t GraphicInstance::CreateShaderProgram( std::string vertPath, std::string
 	GLuint fShaderId = CompileShader(fragCode, GL_FRAGMENT_SHADER);
 
 	uint32_t shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vShaderId);
-        glAttachShader(shaderProgram, fShaderId);
-        glLinkProgram(shaderProgram);
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	glAttachShader(shaderProgram, vShaderId);
+	glAttachShader(shaderProgram, fShaderId);
+	glLinkProgram(shaderProgram);
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 
-        if (!success)
-        {
-                glGetProgramInfoLog(shaderProgram, 512, NULL, infolog);
+	if (!success)
+	{
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infolog);
 		throw std::runtime_error(infolog);
-        }
-        glDeleteShader(vShaderId);
-        glDeleteShader(fShaderId);
+	}
+	glDeleteShader(vShaderId);
+	glDeleteShader(fShaderId);
 
-        return (shaderProgram);
+	return (shaderProgram);
 }
 
 static std::vector<char> ReadFile(const std::string& filename)

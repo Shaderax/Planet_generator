@@ -7,15 +7,32 @@
 Planet::Planet( uint32_t resolution ) : _resolution(resolution)
 {
 	_vbo = 0;
-	_data.resize(resolution * resolution * 6);
-	_index.resize((resolution -1) * (resolution -1) * 6);
-	GenerateCube();
+	_elementBuffer = 0;
+
+	_data.resize(3);
+	_data[0] = vec3<float>(-0.5, -0.5, 0.0f);
+	_data[1] = vec3<float>(0.5, -0.5, 0.0f);
+	_data[2] = vec3<float>(0.0, 0.5, 0.0f);
+
+	_index.resize(3);
+	_index[0] = 0;
+	_index[1] = 1;
+	_index[2] = 2;
+	
+	//_data.resize(resolution * resolution * 6);
+	//_index.resize((resolution -1) * (resolution -1) * 6);
+	//GenerateCube();
 
 	GraphicInstance::GetInstance()->CreateBuffer(&_vbo, _data.size() * 3, reinterpret_cast<float*>(_data.data()));
 	GraphicInstance::GetInstance()->CreateVAO(&_vao, &_vbo);
 	_shaderId = GraphicInstance::GetInstance()->CreateShaderProgram(
-			"../Ressources/Shaders/vertexShader.glsl", 
-			"../Ressources/Shaders/fragmentShader.glsl");
+			"Ressources/Shaders/vertexShader.glsl", 
+			"Ressources/Shaders/fragmentShader.glsl");
+
+	// indices
+	glGenBuffers(1, &_elementBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index.size() * sizeof(unsigned int), reinterpret_cast<uint32_t*>(&_index[0]), GL_STATIC_DRAW);
 }
 
 Planet::~Planet( void )

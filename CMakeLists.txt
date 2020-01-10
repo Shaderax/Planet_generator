@@ -13,6 +13,7 @@ set(SRC
 	Sources/Planet.cpp
 	Sources/Scene.cpp
 	Sources/Camera3D.cpp
+	Sources/Renderable.cpp
 	)
 
 
