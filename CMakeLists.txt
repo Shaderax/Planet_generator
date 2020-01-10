@@ -9,6 +9,10 @@ set(SRC
 	ThirdParty/glad/glad.c
 	Sources/main.cpp
 	Sources/GraphicInstance.cpp
+	Sources/Input.cpp
+	Sources/Planet.cpp
+	Sources/Scene.cpp
+	Sources/Camera3D.cpp
 	)
 
 

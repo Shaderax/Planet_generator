@@ -2,11 +2,11 @@
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 #include <string>
+#include <vector>
 
 class GraphicInstance
 {
-	private:
-		static GraphicInstance*				_instance;
+	public:
 		struct WindowAttribute
 		{
 			uint32_t	_width;
@@ -23,12 +23,7 @@ class GraphicInstance
 				_name(name)
 			{
 			}
-		} _windowAttribute;
-
-		GLFWwindow*						_window;
-		bool					_initialized;
-		vec4<float>				_backgroundColor;
-	public:
+		};
 		static GraphicInstance* GetInstance( void );
 		static void ReleaseInstance( void );
 		GraphicInstance( void );
@@ -40,8 +35,21 @@ class GraphicInstance
 		static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);
 		void PollEvent( void );
 		bool ShouldClose( void );
-		void Draw( void );
+		void Update( void );
 		void SwapBuffer( void );
 		void SetBackgroundColor( vec4<float> color );
-};
+		void ShowCursor( bool select );
+		void GetCursorPosition( double* x, double* y );
+		void CreateBuffer( GLuint* vbo, uint32_t size, float* array);
+		void CreateVAO( GLuint* vao, GLuint* vboToBind);
+		GLuint CompileShader( std::vector<char>& shaderCode, int shaderType );
+		uint32_t CreateShaderProgram( std::string vertPath, std::string fragPath );
 
+	private:
+		static GraphicInstance*				_instance;
+
+		GLFWwindow*						_window;
+		bool					_initialized;
+		vec4<float>				_backgroundColor;
+		WindowAttribute				_windowAttribute;
+};

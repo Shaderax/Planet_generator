@@ -13,28 +13,17 @@ class vec3
 		T x;
 		T y;
 		T z;
-		
+
 		vec3(T mx, T my, T mz) : x(mx), y(my), z(mz)
-		{
-			
-		}
-		
+	{
+
+	}
+
 		vec3(vec3<T> const& v)
 		{
 			this->x = v.x;
 			this->y = v.y;
 			this->z = v.z;
-		}
-		
-		vec3<T> operator*(float const& b)
-		{
-			vec3 Result;
-
-			Result.x = this->x * b;
-			Result.y = this->y * b;
-			Result.z = this->z * b;
-
-			return (Result);
 		}
 
 		vec3<T> operator+(vec3<T> const& b)
@@ -113,7 +102,7 @@ class vec3
 			this->y /= mag;
 			this->z /= mag;
 		}
-		
+
 		vec3<T>	Normalize( void )
 		{
 			vec3<T> Result = *this;
@@ -133,4 +122,31 @@ class vec3
 		{
 			std::cout << x << " " << y << " " << z << std::endl;
 		}
+
+		//vec3<T> operator*(vec3<T> vec, float const& b);
+		//vec3<T> operator*(float b, const vec3<T>& vec);
 };
+
+template<typename T>
+vec3<T> operator*(vec3<T> vec, float const& b)
+{
+	vec3 Result;
+
+	Result.x = vec.x * b;
+	Result.y = vec.y * b;
+	Result.z = vec.z * b;
+
+	return (Result);
+}
+
+template<typename T>
+vec3<T> operator*(float b, const vec3<T>& vec)
+{
+	vec3 Result;
+
+	Result.x = vec.x * b;
+	Result.y = vec.y * b;
+	Result.z = vec.z * b;
+
+	return (Result);
+}

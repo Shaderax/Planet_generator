@@ -6,44 +6,15 @@
 #include "GraphicInstance.hpp"
 #include "Math/vec4.hpp"
 
-static const GLfloat g_vertex_buffer_data[] = {
-    -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, // triangle 1 : end
-    1.0f, 1.0f,-1.0f, // triangle 2 : begin
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f, // triangle 2 : end
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
-};
+#include "Input.hpp"
+
+#include "Planet.hpp"
+
+#include "Scene.hpp"
+
+#include "Camera3D.hpp"
+
+static Input input;
 
 void processInput(GLFWwindow *window)
 {
@@ -53,6 +24,7 @@ void processInput(GLFWwindow *window)
 
 int main()
 {
+	//// Init ////
 	try
 	{
 		GraphicInstance::GetInstance()->Initialize();
@@ -64,15 +36,27 @@ int main()
 
 	GraphicInstance::GetInstance()->SetBackgroundColor(vec4<float>(0.2f, 0.3f, 0.3f, 1.0f));
 
+	//// Setup ////
+	
+	Scene scene;
+	Camera3D* camera = new Camera3D;
+	scene.MakeCurrentCamera( camera );
+	Planet* planet1 = reinterpret_cast<Planet*>(scene.AddObject(new Planet(100)));
+
 	while(!GraphicInstance::GetInstance()->ShouldClose())
 	{
-		processInput(nullptr);
+		input.Update();
+		//processInput(nullptr);
 
-		GraphicInstance::GetInstance()->Draw();
+		GraphicInstance::GetInstance()->Update();
+
+		scene.Draw();
 
 		GraphicInstance::GetInstance()->PollEvent();
 		GraphicInstance::GetInstance()->SwapBuffer();
 	}
+
+	delete planet1;
 
 	GraphicInstance::GetInstance()->ReleaseInstance();
 	return (0);
