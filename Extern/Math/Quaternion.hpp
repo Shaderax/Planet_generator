@@ -29,17 +29,21 @@ struct Quaternion
 	{
 		mat4<float> mat;
 
-		mat(0, 0) = 1 - 2 * (v.y * v.y) - 2 * (v.z * v.z);
-		mat(0, 1) = 2 * v.x * v.y - 2 * f * v.z;
-		mat(0, 2) = 2 * v.x * v.z + 2 * f * v.y;
+		float xx = (v.x * v.x);
+		float yy = (v.y * v.y);
+		float zz = (v.z * v.x);
 
-		mat(1, 0) = 2 * v.x * v.y + 2 * f * v.z;
-		mat(1, 1) = 1 - 2 * (v.x * v.x) - 2 * (v.z * v.z);
-		mat(1, 2) = 2 * v.y * v.z + 2 * f * v.x;
+		mat(0, 0) = 1 - 2 * (yy + zz);
+		mat(0, 1) = 2 * (v.x * v.y - v.z * f);
+		mat(0, 2) = 2 * (v.x * v.z + f * v.y);
 
-		mat(2, 0) = 2 * v.x * v.z - 2 * f * v.y;
-		mat(2, 1) = 2 * v.y * v.z - 2 * f * v.x;
-		mat(2, 2) = 1 - 2 * (v.x * v.x) - 2 * (v.y * v.y);
+		mat(1, 0) = 2 * (v.x * v.y + f * v.z);
+		mat(1, 1) = 1 - 2 * (xx + zz);
+		mat(1, 2) = 2 * (v.y * v.z - f * v.x);
+
+		mat(2, 0) = 2 * (v.x * v.z - f * v.y);
+		mat(2, 1) = 2 * (v.y * v.z + f * v.x);
+		mat(2, 2) = 1 - 2 * (xx + yy);
 
 		return (mat);
 	}
@@ -86,10 +90,16 @@ struct Quaternion
 
 	Quaternion& operator*=(Quaternion const& b)
 	{
+		this->v.x = v.x  * b.f	 + v.y * b.v.z	- v.z * b.v.y	+ f * b.v.x;
+		this->v.y = -v.x * b.v.z + v.y * b.f	+ v.z * b.v.x	+ f * b.v.y;
+		this->v.z = v.x  * b.v.y - v.y * b.v.x  + v.z * b.f	+ f * b.v.z;
+		this->f =   -v.x * b.v.x - v.y * b.v.y  - v.z * b.v.z	+ f * b.f;
+		/*
 		this->v.x = f * b.v.x	+ this->v.x * b.f	+ this->v.y * b.v.z	- this->v.z * b.v.y;
 		this->v.y = f * b.v.y	- this->v.x * b.v.z	+ this->v.y * b.f	+ this->v.z * b.v.x;
 		this->v.z = f * b.v.z	+ this->v.x * b.v.y	- this->v.y * b.v.x	+ this->v.z * b.f;
 		this->f   = f * b.f	- this->v.x * b.v.x	- this->v.y * b.v.y	- this->v.z * b.v.z;
+		*/
 		
 		return (*this);// = (*this) * b;
 	}

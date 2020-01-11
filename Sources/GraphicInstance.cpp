@@ -103,7 +103,7 @@ void GraphicInstance::Initialize( void )
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void GraphicInstance::SetBackgroundColor( vec4<float> color )
@@ -131,7 +131,7 @@ void GraphicInstance::CreateBuffer( GLuint* vbo, uint32_t size, float* array)
 {
 	glGenBuffers(1, vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, *vbo);
-	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), array, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), array, GL_DYNAMIC_DRAW);
 }
 
 void GraphicInstance::CreateVAO( GLuint* vao, GLuint* vboToBind )

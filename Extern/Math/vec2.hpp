@@ -83,4 +83,14 @@ class vec2
 			std::cout << x << " " << y << std::endl;
 		}
 
+		vec2<T> operator/(uint32_t const& b)
+		{
+			vec2 Result;
+
+			Result.x = this->x / b;
+			Result.y = this->y / b;
+
+			return (Result);
+		}
+
 };

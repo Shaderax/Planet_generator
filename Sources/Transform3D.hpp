@@ -20,9 +20,9 @@ struct Transform3D
 		vec3<float> y(mat(1, 0), mat(1, 1), mat(1, 2));
 		vec3<float> z(mat(2, 0), mat(2, 1), mat(2, 2));
 
-		_pos += (x * dir.x);
-		_pos += (y * dir.y);
-		_pos += (z * dir.z);
+		_pos.x += (1 * dir.x);
+		_pos.y += (1 * dir.y);
+		_pos.z += (1 * dir.z);
 	}
 	
 	void Rotate(float x, float y, float z)

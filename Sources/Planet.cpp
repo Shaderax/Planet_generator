@@ -8,20 +8,12 @@ Planet::Planet( uint32_t resolution ) : _resolution(resolution)
 {
 	_vbo = 0;
 	_elementBuffer = 0;
+	_roughness = 1.0f;
+	_strength = 1.0f;
 
-	_data.resize(3);
-	_data[0] = vec3<float>(-0.5, -0.5, 0.0f);
-	_data[1] = vec3<float>(0.5, -0.5, 0.0f);
-	_data[2] = vec3<float>(0.0, 0.5, 0.0f);
-
-	_index.resize(3);
-	_index[0] = 0;
-	_index[1] = 1;
-	_index[2] = 2;
-	
-	//_data.resize(resolution * resolution * 6);
-	//_index.resize((resolution -1) * (resolution -1) * 6);
-	//GenerateCube();
+	_data.resize(resolution * resolution * 6);
+	_index.resize((resolution -1) * (resolution -1) * 6 * 6);
+	GenerateCube();
 
 	GraphicInstance::GetInstance()->CreateBuffer(&_vbo, _data.size() * 3, reinterpret_cast<float*>(_data.data()));
 	GraphicInstance::GetInstance()->CreateVAO(&_vao, &_vbo);
@@ -32,13 +24,35 @@ Planet::Planet( uint32_t resolution ) : _resolution(resolution)
 	// indices
 	glGenBuffers(1, &_elementBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index.size() * sizeof(unsigned int), reinterpret_cast<uint32_t*>(&_index[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index.size() * sizeof(unsigned int), reinterpret_cast<uint32_t*>(&_index[0]), GL_DYNAMIC_DRAW);
 }
 
 Planet::~Planet( void )
 {
 	glDeleteVertexArrays(1, &_vao);
 	glDeleteBuffers(1, &_vbo);
+}
+
+void Planet::RegenerateCube( void )
+{
+//	glDeleteVertexArrays(1, &_vao);
+//	glDeleteBuffers(1, &_vbo);
+
+	_data.resize(_resolution * _resolution * 6);
+	_index.resize((_resolution -1) * (_resolution -1) * 6 * 6);
+	GenerateCube();
+
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, _data.size() * 3 * sizeof(float), reinterpret_cast<float*>(_data.data()));
+
+//	GraphicInstance::GetInstance()->CreateBuffer(&_vbo, _data.size() * 3, reinterpret_cast<float*>(_data.data()));
+//	GraphicInstance::GetInstance()->CreateVAO(&_vao, &_vbo);
+
+	// indices
+	//glGenBuffers(1, &_elementBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, _index.size() * sizeof(unsigned int), reinterpret_cast<uint32_t*>(&_index[0]));
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index.size() * sizeof(unsigned int), reinterpret_cast<uint32_t*>(&_index[0]), GL_STATIC_DRAW);
 }
 
 void Planet::GenerateCube( void )
@@ -49,29 +63,36 @@ void Planet::GenerateCube( void )
 	directions[1] = vec3<float>(0.0f, -1.0f, 0.0f);
 	directions[2] = vec3<float>(-1.0f, 0.0f, 0.0f);
 	directions[3] = vec3<float>(1.0f, 0.0f, 0.0f);
-	directions[4] = vec3<float>(0.0f, 0.0f, -1.0f);
-	directions[5] = vec3<float>(0.0f, 0.0f, 1.0f);
+	directions[4] = vec3<float>(0.0f, 0.0f, 1.0f);
+	directions[5] = vec3<float>(0.0f, 0.0f, -1.0f);
 
 	for (uint32_t index = 0 ; index < 6 ; index++)
 		GenerateFace(index, directions[index]);
 }
 
-void Planet::GenerateFace( uint32_t index, vec3<float> direction )
+float Planet::Evaluate( vec3<float> point )
+{
+	float noisevalue = (_noise.Evaluate(point * _roughness + _center) + 1) * 0.5f;
+	return noisevalue * _strength;
+}
+
+void Planet::GenerateFace( uint32_t nbFace, vec3<float> direction )
 {
 	vec3<float> axisA = vec3<float>(direction.y, direction.z, direction.x);
 	vec3<float> axisB = direction.Cross(axisA);
-	uint32_t indexCounter = 0;
+	uint32_t indexCounter = nbFace * ((_resolution - 1) * (_resolution - 1) * 6);
 
 	for (uint32_t y = 0 ; y < _resolution ; y++)
 	{
 		for (uint32_t x = 0 ; x < _resolution ; x++)
 		{
-			uint32_t index = x + y * _resolution;
+			uint32_t index = nbFace * (_resolution) * (_resolution) + x + y * _resolution;
 
-			vec2<float> percent = vec2<float>(x / _resolution - 1, y / _resolution - 1);
+			vec2<float> percent = vec2<float>(x, y) / (_resolution - 1);
 			vec3<float> pointOnUnitCube = direction + (percent.x - 0.5f) * 2.0f * axisA + (percent.y - 0.5f) * 2.0f * axisB;
-			//Vector3 pointOnUnitSphere = pointOnUnitCube.normalized;
-			_data[index] = pointOnUnitCube;//pointOnUnitSphere;
+			vec3<float> pointOnUnitSphere = pointOnUnitCube.Normalize();
+			_data[index] = pointOnUnitSphere * (1 + Evaluate(pointOnUnitSphere));
+			//std::cout << pointOnUnitCube.x << " " << pointOnUnitCube.y << " " << pointOnUnitCube.z << std::endl;
 
 			if (x != _resolution - 1 && y != _resolution - 1)
 			{

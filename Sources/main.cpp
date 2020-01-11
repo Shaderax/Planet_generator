@@ -47,6 +47,7 @@ void processInput( Camera3D* cam )
 
 int main()
 {
+	srand(time(0));
 	//// Init ////
 	try
 	{
@@ -65,14 +66,25 @@ int main()
 	Camera3D* camera = new Camera3D;
 	//camera->_pos.z = 3.0f;
 	scene.MakeCurrentCamera( camera );
-	Planet* planet1 = reinterpret_cast<Planet*>(scene.AddObject(new Planet(100)));
+	Planet* planet1 = reinterpret_cast<Planet*>(scene.AddObject(new Planet(70)));
 
 	while(!GraphicInstance::GetInstance()->ShouldClose())
 	{
 		input.Update();
 		processInput(camera);
+		if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_I) == GLFW_PRESS)
+			planet1->_roughness += 0.01f;
+		if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_K) == GLFW_PRESS)
+			planet1->_roughness -= 0.01f;
+		if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_O) == GLFW_PRESS)
+			planet1->_strength += 0.01f;
+		if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_L) == GLFW_PRESS)
+			planet1->_strength -= 0.01f;
 
 		GraphicInstance::GetInstance()->Update();
+
+		planet1->_center += vec3<float>(0.01f, 0.0f, 0.0f);
+		planet1->RegenerateCube();
 
 		scene.Draw();
 
