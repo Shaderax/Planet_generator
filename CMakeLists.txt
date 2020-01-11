@@ -27,7 +27,7 @@ elseif (APPLE)
 	#link_directories(/usr/lib/)
 endif()
 
-include_directories(Extern/)
+include_directories(Modules/)
 include_directories(ThirdParty/glfw/include/)
 include_directories(ThirdParty/glad/include/)
 
