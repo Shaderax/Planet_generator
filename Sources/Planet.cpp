@@ -9,7 +9,11 @@ Planet::Planet( uint32_t resolution ) : _resolution(resolution)
 	_vbo = 0;
 	_elementBuffer = 0;
 	_roughness = 1.0f;
-	_strength = 1.0f;
+	_strength = 0.5f;
+	_baseRoughness = 1.0f;
+	_nbLayers = 5;
+	_persistence = 0.5f;
+	_minValue = 0.5f;
 
 	_data.resize(resolution * resolution * 6);
 	_index.resize((resolution -1) * (resolution -1) * 6 * 6);
@@ -72,8 +76,21 @@ void Planet::GenerateCube( void )
 
 float Planet::Evaluate( vec3<float> point )
 {
-	float noisevalue = (_noise.Evaluate(point * _roughness + _center) + 1) * 0.5f;
-	return noisevalue * _strength;
+	//float noisevalue = (_noise.Evaluate(point * _roughness + _center) + 1) * 0.5f;
+	float noiseValue = 0;
+	float frequency = _baseRoughness;
+	float amplitude = 1;
+
+	for ( uint32_t index = 0 ; index < _nbLayers ; index++)
+	{
+		float v = _noise.Evaluate(point * frequency + _center);
+		noiseValue += (v + 1) * 0.5f * amplitude;
+		frequency *= _roughness;
+		amplitude *= _persistence;
+	}
+
+	noiseValue = ((noiseValue - _minValue) < 0) ? 0 : noiseValue - _minValue;
+	return noiseValue * _strength;
 }
 
 void Planet::GenerateFace( uint32_t nbFace, vec3<float> direction )
@@ -92,7 +109,6 @@ void Planet::GenerateFace( uint32_t nbFace, vec3<float> direction )
 			vec3<float> pointOnUnitCube = direction + (percent.x - 0.5f) * 2.0f * axisA + (percent.y - 0.5f) * 2.0f * axisB;
 			vec3<float> pointOnUnitSphere = pointOnUnitCube.Normalize();
 			_data[index] = pointOnUnitSphere * (1 + Evaluate(pointOnUnitSphere));
-			//std::cout << pointOnUnitCube.x << " " << pointOnUnitCube.y << " " << pointOnUnitCube.z << std::endl;
 
 			if (x != _resolution - 1 && y != _resolution - 1)
 			{
