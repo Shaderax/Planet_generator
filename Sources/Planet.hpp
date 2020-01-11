@@ -4,9 +4,9 @@
 class Planet : public Renderable
 {
 	private:
-		uint32_t _resolution;
 		Noise _noise;
 	public:
+		uint32_t _resolution;
 		uint32_t _nbLayers;
 		float _baseRoughness;
 		float _persistence;
