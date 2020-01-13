@@ -28,7 +28,7 @@ class vec3
 
 		vec3<T> operator+(vec3<T> const& b)
 		{
-			vec3 Result;
+			vec3<T> Result;
 
 			Result.x = this->x + b.x;
 			Result.y = this->y + b.y;
@@ -39,7 +39,7 @@ class vec3
 
 		vec3<T> operator-(vec3<T> const& b)
 		{
-			vec3 Result;
+			vec3<T> Result;
 
 			Result.x = this->x - b.x;
 			Result.y = this->y - b.y;
@@ -77,7 +77,7 @@ class vec3
 
 		vec3<T> Cross(vec3<T> const& a)
 		{
-			vec3 Result;
+			vec3<T> Result;
 
 			Result.x = this->y * a.z - this->z * a.y;
 			Result.y = this->z * a.x - this->x * a.z;
@@ -130,7 +130,7 @@ class vec3
 template<typename T>
 vec3<T> operator*(vec3<T> vec, float const& b)
 {
-	vec3 Result;
+	vec3<T> Result;
 
 	Result.x = vec.x * b;
 	Result.y = vec.y * b;
@@ -142,7 +142,7 @@ vec3<T> operator*(vec3<T> vec, float const& b)
 template<typename T>
 vec3<T> operator*(float b, const vec3<T>& vec)
 {
-	vec3 Result;
+	vec3<T> Result;
 
 	Result.x = vec.x * b;
 	Result.y = vec.y * b;
