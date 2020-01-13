@@ -32,7 +32,7 @@ mat4< float >	Camera3D::GetProjectionMatrix( void )
 
 	mat4< float > proj;
 
-	float scale;// = 1 / tan(_fov * M_PI / 180 / 2);
+	float scale;
 
 	scale = 1 / tan(_fov * 0.5 * (M_PI / 180));
 

@@ -9,9 +9,9 @@ class Camera3D : public Object
 	public:
 		Camera3D( void );
 		void MakeCurrent( void );
-		mat4<float> GetViewMatrix( void );
-		mat4< float >	GetProjectionMatrix( void );
 		void SetTarget(vec3<float> target);
+		mat4<float> GetViewMatrix( void );
+		mat4<float> GetProjectionMatrix( void );
 	private:
 		vec3<float>	_target;
 		vec3<float>	_up;

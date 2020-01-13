@@ -7,6 +7,8 @@
 #include <string>
 #include <fstream>
 
+GraphicInstance* GraphicInstance::_instance = nullptr;
+
 static std::vector<char> ReadFile(const std::string& filename);
 
 GLFWwindow* GraphicInstance::GetWindow( void )
@@ -16,21 +18,21 @@ GLFWwindow* GraphicInstance::GetWindow( void )
 
 void GraphicInstance::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
 {
-	std::cout << "Resize window : " << width << " " << height << std::endl;
 	auto app = reinterpret_cast<GraphicInstance*>(glfwGetWindowUserPointer(window));
+
+	std::cout << "Resize window : " << width << " " << height << std::endl;
 	glViewport(0, 0, width, height);
+
 	app->_windowAttribute._width = width;
 	app->_windowAttribute._height = height;
 }
-
-GraphicInstance* GraphicInstance::_instance = nullptr;
 
 GraphicInstance* GraphicInstance::GetInstance( void )
 {
 	if (!_instance)
 		_instance = new GraphicInstance;
 
-	return _instance;
+	return (_instance);
 }
 
 void GraphicInstance::ReleaseInstance( void )
@@ -44,7 +46,6 @@ void GraphicInstance::ReleaseInstance( void )
 
 GraphicInstance::GraphicInstance( void )
 {
-	std::cout << "GraphicInstance Created" << std::endl;
 	_window = nullptr;
 	_initialized = false;
 }
@@ -54,7 +55,10 @@ GraphicInstance::~GraphicInstance( void )
 	if (_window)
 		glfwDestroyWindow(_window);
 	if (_initialized)
+	{
+		_initialized = false;
 		glfwTerminate();
+	}
 }
 
 void GraphicInstance::PollEvent( void )
@@ -83,7 +87,11 @@ void GraphicInstance::Initialize( void )
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For Mac OS
+
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For Mac OS
+#endif
+
 	_initialized = true;
 
 	_window = glfwCreateWindow(_windowAttribute._width, _windowAttribute._height, _windowAttribute._name.c_str(), NULL, NULL);

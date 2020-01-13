@@ -48,7 +48,7 @@ class GraphicInstance
 	private:
 		static GraphicInstance*				_instance;
 
-		GLFWwindow*						_window;
+		GLFWwindow*				_window;
 		bool					_initialized;
 		vec4<float>				_backgroundColor;
 		WindowAttribute				_windowAttribute;

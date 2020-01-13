@@ -1,12 +1,14 @@
 #pragma once
 
+class Object;
+
 class Input
 {
 	public:
 		Input( void );
 		void Update( void );
 		bool isMouseMoved( void );
-
+		void Process( Object* obj );
 
 		struct Mouse
 		{

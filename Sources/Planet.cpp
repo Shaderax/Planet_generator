@@ -39,9 +39,6 @@ Planet::~Planet( void )
 
 void Planet::RegenerateCube( void )
 {
-//	glDeleteVertexArrays(1, &_vao);
-//	glDeleteBuffers(1, &_vbo);
-
 	_data.resize(_resolution * _resolution * 6);
 	_index.resize((_resolution -1) * (_resolution -1) * 6 * 6);
 	GenerateCube();
@@ -49,14 +46,9 @@ void Planet::RegenerateCube( void )
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, _data.size() * 3 * sizeof(float), reinterpret_cast<float*>(_data.data()));
 
-//	GraphicInstance::GetInstance()->CreateBuffer(&_vbo, _data.size() * 3, reinterpret_cast<float*>(_data.data()));
-//	GraphicInstance::GetInstance()->CreateVAO(&_vao, &_vbo);
-
 	// indices
-	//glGenBuffers(1, &_elementBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, _index.size() * sizeof(unsigned int), reinterpret_cast<uint32_t*>(&_index[0]));
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index.size() * sizeof(unsigned int), reinterpret_cast<uint32_t*>(&_index[0]), GL_STATIC_DRAW);
 }
 
 void Planet::GenerateCube( void )
@@ -76,7 +68,6 @@ void Planet::GenerateCube( void )
 
 float Planet::Evaluate( vec3<float> point )
 {
-	//float noisevalue = (_noise.Evaluate(point * _roughness + _center) + 1) * 0.5f;
 	float noiseValue = 0;
 	float frequency = _baseRoughness;
 	float amplitude = 1;

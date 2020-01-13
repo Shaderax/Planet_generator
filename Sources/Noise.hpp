@@ -97,22 +97,6 @@ class Noise
 			//}
 		}
 
-		// Return random number between -1 and 1
-		float RandNoise( int32_t t )
-		{
-			t = (t<<13) ^ t;
-			t = (t * (t * t * 15731 + 789221) + 1376312589);
-
-			return (1.0 - (t & 0x7fffffff) / 1073741824.0);
-		}
-
-		float Noise2d( int32_t x, int32_t y )
-		{
-			int32_t tmp = RandNoise(x) * 850000;
-
-			return RandNoise(tmp + y);
-		}
-
 		float Evaluate(vec3<float> point)
 		{
 			double x = point.x;

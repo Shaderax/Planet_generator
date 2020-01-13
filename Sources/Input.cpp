@@ -1,6 +1,7 @@
 #include "Input.hpp"
 
 #include "GraphicInstance.hpp"
+#include "Object.hpp"
 
 Input::Input( void )
 {
@@ -18,8 +19,37 @@ Input::Input( void )
         _mouse._pitch = 0.0f;
 }
 
+void Input::Process( Object* obj )
+{
+	vec3<float> dir;
+	float rot = 0.0f;
+
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_W) == GLFW_PRESS)
+		dir.z += 0.01f;
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_S) == GLFW_PRESS)
+		dir.z -= 0.1f;
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_A) == GLFW_PRESS)
+		dir.x -= 0.01f;
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_D) == GLFW_PRESS)
+		dir.x += 0.01f;
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_SPACE) == GLFW_PRESS)
+		dir.y += 0.01f;
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		dir.y -= 0.01f;
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_LEFT) == GLFW_PRESS)
+		rot = 1.0f;
+	if (glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+		rot = -1.0f;
+
+	obj->Translate(dir);
+	obj->Rotate(0.0f, rot, 0.0f);
+}
+
 void Input::Update( void )
 {
+	if(glfwGetKey(GraphicInstance::GetInstance()->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(GraphicInstance::GetInstance()->GetWindow(), true);
+
         if (isMouseMoved() == false)
                 return ;
 
